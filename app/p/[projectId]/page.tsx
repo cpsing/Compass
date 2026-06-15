@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ phase?: string }>;
+  searchParams: Promise<{ phase?: string; status?: string }>;
 }
 
 export default async function ProjectTreePage({
@@ -30,12 +30,28 @@ export default async function ProjectTreePage({
   const knownPhases = listKnownPhases(project);
   const selected = sp.phase ?? project.active_phase;
   const phaseFilter = selected === "all" ? undefined : selected;
+  const statusFilter = sp.status ?? undefined;
   const nodes = listProjectNodes(project.id, {
     phase: phaseFilter,
     include_phase_ancestors: phaseFilter !== undefined,
+    status: statusFilter,
   });
   const counts = getProjectCounts(project.id, { phase: phaseFilter });
   const orphanCount = countUnattributed(project.id);
+
+  // Build query string preserving current filters
+  const qs = (override: Record<string, string | undefined>) => {
+    const merged = { phase: selected, status: statusFilter, ...override };
+    const params = new URLSearchParams();
+    for (const [k, v] of Object.entries(merged)) {
+      if (v && v !== project.active_phase) params.set(k, v);
+    }
+    const s = params.toString();
+    return s ? `?${s}` : "";
+  };
+  // Toggle: clicking the active status clears it
+  const statusHref = (s: string) =>
+    statusFilter === s ? qs({ status: undefined }) : qs({ status: s });
 
   return (
     <div className="space-y-6">
@@ -66,33 +82,55 @@ export default async function ProjectTreePage({
       </div>
 
       <div className="flex items-center gap-4 flex-wrap text-sm">
-        <SummaryChip label="total" value={counts.total} />
+        <SummaryChip
+          label="total"
+          value={counts.total}
+          active={!statusFilter}
+          href={qs({ status: undefined })}
+        />
+        <SummaryChip
+          label="planned"
+          value={counts.planned}
+          tone="gray"
+          active={statusFilter === "planned"}
+          href={statusHref("planned")}
+        />
         <SummaryChip
           label="in progress"
           value={counts.in_progress}
           tone="blue"
+          active={statusFilter === "in_progress"}
+          href={statusHref("in_progress")}
         />
         <SummaryChip
           label="awaiting test"
           value={counts.ai_completed}
           tone="purple"
-          href={
-            counts.ai_completed > 0 ? `/p/${project.id}/test-queue` : undefined
-          }
+          active={statusFilter === "ai_completed"}
+          href={statusHref("ai_completed")}
         />
         <SummaryChip
           label="needs you"
           value={counts.needs_user_action}
           tone="yellow"
-          href={
-            counts.needs_user_action > 0
-              ? `/p/${project.id}/test-queue`
-              : undefined
-          }
+          active={statusFilter === "needs_user_action"}
+          href={statusHref("needs_user_action")}
         />
-        <SummaryChip label="verified" value={counts.verified} tone="green" />
+        <SummaryChip
+          label="verified"
+          value={counts.verified}
+          tone="green"
+          active={statusFilter === "verified"}
+          href={statusHref("verified")}
+        />
         {counts.broken > 0 && (
-          <SummaryChip label="broken" value={counts.broken} tone="red" />
+          <SummaryChip
+            label="broken"
+            value={counts.broken}
+            tone="red"
+            active={statusFilter === "broken"}
+            href={statusHref("broken")}
+          />
         )}
         {orphanCount > 0 && (
           <Link
@@ -123,11 +161,13 @@ function SummaryChip({
   label,
   value,
   tone,
+  active,
   href,
 }: {
   label: string;
   value: number;
-  tone?: "blue" | "purple" | "yellow" | "green" | "red";
+  tone?: "blue" | "purple" | "yellow" | "green" | "red" | "gray";
+  active?: boolean;
   href?: string;
 }) {
   const toneClass =
@@ -141,12 +181,19 @@ function SummaryChip({
             ? "text-green-300"
             : tone === "red"
               ? "text-red-300"
-              : "text-gray-200";
+              : tone === "gray"
+                ? "text-gray-400"
+                : "text-gray-200";
+  const activeClass = active
+    ? "border-blue-500 bg-blue-950/40"
+    : "border-gray-800 bg-gray-900";
   const inner = (
-    <span className="inline-flex items-baseline gap-1.5 px-2 py-1 rounded bg-gray-900 border border-gray-800">
+    <span
+      className={`inline-flex items-baseline gap-1.5 px-2 py-1 rounded border cursor-pointer transition-colors ${activeClass} ${active ? "" : "hover:border-gray-600"}`}
+    >
       <span className={`font-semibold ${toneClass}`}>{value}</span>
       <span className="text-xs text-gray-500">{label}</span>
     </span>
   );
-  return href ? <Link href={href}>{inner}</Link> : inner;
+  return href !== undefined ? <Link href={href}>{inner}</Link> : inner;
 }

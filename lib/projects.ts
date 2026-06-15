@@ -19,6 +19,7 @@ export function getProject(id: string): Project | null {
 
 export interface ProjectCounts {
   total: number;
+  planned: number;
   in_progress: number;
   ai_completed: number;
   needs_user_action: number;
@@ -74,6 +75,7 @@ export function getProjectCounts(
 
   return {
     total: totalRow.n,
+    planned: byStatus.planned ?? 0,
     in_progress: byStatus.in_progress ?? 0,
     ai_completed: byStatus.ai_completed ?? 0,
     needs_user_action: byStatus.needs_user_action ?? 0,
