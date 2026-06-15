@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# compass-cli — CLI launcher (dev mode)
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+TSX="$ROOT/node_modules/.bin/tsx"
+ENTRY="$ROOT/src/cli/index.ts"
+
+if [ ! -x "$TSX" ]; then
+  echo "[compass-cli] missing $TSX — run 'npm install' in $ROOT" >&2
+  exit 127
+fi
+if [ ! -f "$ENTRY" ]; then
+  echo "[compass-cli] missing $ENTRY" >&2
+  exit 127
+fi
+
+exec "$TSX" "$ENTRY" "$@"

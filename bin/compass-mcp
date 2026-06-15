@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# compass-mcp — MCP stdio server launcher (dev mode)
+# Resolves the Compass repo root so the script can be invoked with an absolute
+# path from any AI client (Claude Desktop, Claude Code, Cursor, ...).
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+TSX="$ROOT/node_modules/.bin/tsx"
+ENTRY="$ROOT/src/mcp/server.ts"
+
+if [ ! -x "$TSX" ]; then
+  echo "[compass-mcp] missing $TSX — run 'npm install' in $ROOT" >&2
+  exit 127
+fi
+if [ ! -f "$ENTRY" ]; then
+  echo "[compass-mcp] missing $ENTRY" >&2
+  exit 127
+fi
+
+exec "$TSX" "$ENTRY" "$@"
