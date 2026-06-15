@@ -10,12 +10,13 @@ import { countUnattributed } from "../../../src/db/events.ts";
 import { TreeView } from "../../../components/TreeView.tsx";
 import { PhaseSwitcher } from "../../../components/PhaseSwitcher.tsx";
 import { CreateNodeForm } from "../../../components/CreateNodeForm.tsx";
+import { SearchBar } from "../../../components/SearchBar.tsx";
 
 export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ phase?: string; status?: string }>;
+  searchParams: Promise<{ phase?: string; status?: string; q?: string }>;
 }
 
 export default async function ProjectTreePage({
@@ -30,21 +31,41 @@ export default async function ProjectTreePage({
   const knownPhases = listKnownPhases(project);
   const selected = sp.phase ?? project.active_phase;
   const phaseFilter = selected === "all" ? undefined : selected;
-  const statusFilter = sp.status ?? undefined;
-  const nodes = listProjectNodes(project.id, {
+  const statusFilter = (sp.status ?? undefined) as
+    | "planned"
+    | "in_progress"
+    | "ai_completed"
+    | "needs_user_action"
+    | "verified"
+    | "broken"
+    | "archived"
+    | undefined;
+  const searchQuery = sp.q?.trim() ?? undefined;
+  
+  let nodes = listProjectNodes(project.id, {
     phase: phaseFilter,
     include_phase_ancestors: phaseFilter !== undefined,
-    status: statusFilter,
+    status: statusFilter as any,
   });
+  
+  // Client-side search filter
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    nodes = nodes.filter(
+      (n) =>
+        n.title.toLowerCase().includes(q) ||
+        n.description?.toLowerCase().includes(q)
+    );
+  }
   const counts = getProjectCounts(project.id, { phase: phaseFilter });
   const orphanCount = countUnattributed(project.id);
 
   // Build query string preserving current filters
   const qs = (override: Record<string, string | undefined>) => {
-    const merged = { phase: selected, status: statusFilter, ...override };
+    const merged = { phase: selected, status: statusFilter, q: searchQuery, ...override };
     const params = new URLSearchParams();
     for (const [k, v] of Object.entries(merged)) {
-      if (v && v !== project.active_phase) params.set(k, v);
+      if (v && (k !== 'phase' || v !== project.active_phase)) params.set(k, v);
     }
     const s = params.toString();
     return s ? `?${s}` : "";
@@ -72,14 +93,24 @@ export default async function ProjectTreePage({
           </Link>
         </div>
       </div>
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <PhaseSwitcher
           projectId={project.id}
           phases={knownPhases}
           activePhase={project.active_phase}
           selected={selected}
         />
+        <SearchBar
+          projectId={project.id}
+          initialQuery={searchQuery}
+          currentParams={{ phase: selected, status: statusFilter }}
+        />
       </div>
+      {searchQuery && (
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          {nodes.length} result{nodes.length !== 1 ? 's' : ''} for &ldquo;<span className="text-gray-700 dark:text-gray-200">{searchQuery}</span>&rdquo;
+        </div>
+      )}
 
       <div className="flex items-center gap-4 flex-wrap text-sm">
         <SummaryChip
