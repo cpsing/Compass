@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "compass": {
+      "type": "local",
+      "command": ["/home/xingbaichao/compass-dev/bin/compass-mcp"],
+      "environment": {
+        "COMPASS_CLIENT_TYPE": "opencode",
+        "COMPASS_PROJECT_ROOT": "/home/xingbaichao/compass-dev"
+      }
+    }
+  }
+}
