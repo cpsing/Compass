@@ -1,1 +1,4 @@
-node_modules/\n.next/\n*.sqlite\n.env
+node_modules/
+.next/
+*.sqlite
+.env
