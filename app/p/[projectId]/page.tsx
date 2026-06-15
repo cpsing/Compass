@@ -57,16 +57,16 @@ export default async function ProjectTreePage({
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <Link href="/" className="text-xs text-gray-500 hover:text-gray-300">
+          <Link href="/" className="text-xs text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
             ← all projects
           </Link>
           <h1 className="text-2xl font-semibold mt-2">{project.name}</h1>
-          <p className="text-xs text-gray-500 mt-1 mono">{project.root_path}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 mono">{project.root_path}</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href={`/p/${project.id}/settings`}
-            className="text-xs px-2 py-1 rounded border border-gray-700 bg-gray-900 hover:bg-gray-800 text-gray-200"
+            className="text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200"
           >
             Settings
           </Link>
@@ -135,14 +135,14 @@ export default async function ProjectTreePage({
         {orphanCount > 0 && (
           <Link
             href={`/p/${project.id}/orphans`}
-            className="ml-auto text-xs px-2 py-1 rounded border border-yellow-800 bg-yellow-900/30 hover:bg-yellow-900/50 text-yellow-200 inline-flex items-center gap-1.5"
+            className="ml-auto text-xs px-2 py-1 rounded border border-yellow-300 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/30 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 text-yellow-700 dark:text-yellow-200 inline-flex items-center gap-1.5"
           >
             <span className="font-semibold">{orphanCount}</span> unattributed →
           </Link>
         )}
         <Link
           href={`/p/${project.id}/clients`}
-          className={`${orphanCount > 0 ? "" : "ml-auto"} text-xs px-2 py-1 rounded border border-gray-700 bg-gray-900 hover:bg-gray-800 text-gray-200`}
+          className={`${orphanCount > 0 ? "" : "ml-auto"} text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200`}
         >
           Client activity →
         </Link>
@@ -172,27 +172,27 @@ function SummaryChip({
 }) {
   const toneClass =
     tone === "blue"
-      ? "text-blue-300"
+      ? "text-blue-600 dark:text-blue-300"
       : tone === "purple"
-        ? "text-purple-300"
+        ? "text-purple-600 dark:text-purple-300"
         : tone === "yellow"
-          ? "text-yellow-300"
+          ? "text-yellow-600 dark:text-yellow-300"
           : tone === "green"
-            ? "text-green-300"
+            ? "text-green-600 dark:text-green-300"
             : tone === "red"
-              ? "text-red-300"
+              ? "text-red-600 dark:text-red-300"
               : tone === "gray"
-                ? "text-gray-400"
-                : "text-gray-200";
+                ? "text-gray-500 dark:text-gray-400"
+                : "text-gray-700 dark:text-gray-200";
   const activeClass = active
-    ? "border-blue-500 bg-blue-950/40"
-    : "border-gray-800 bg-gray-900";
+    ? "border-blue-500 bg-blue-50 dark:bg-blue-950/40"
+    : "border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900";
   const inner = (
     <span
-      className={`inline-flex items-baseline gap-1.5 px-2 py-1 rounded border cursor-pointer transition-colors ${activeClass} ${active ? "" : "hover:border-gray-600"}`}
+      className={`inline-flex items-baseline gap-1.5 px-2 py-1 rounded border cursor-pointer transition-colors ${activeClass} ${active ? "" : "hover:border-gray-400 dark:hover:border-gray-600"}`}
     >
       <span className={`font-semibold ${toneClass}`}>{value}</span>
-      <span className="text-xs text-gray-500">{label}</span>
+      <span className="text-xs text-gray-500 dark:text-gray-500">{label}</span>
     </span>
   );
   return href !== undefined ? <Link href={href}>{inner}</Link> : inner;

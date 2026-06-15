@@ -76,14 +76,14 @@ function useExpandedState(
 export function TreeView({ projectId, nodes }: Props) {
   if (nodes.length === 0) {
     return (
-      <div className="text-sm text-gray-500 p-6 rounded-lg border border-dashed border-gray-800">
+      <div className="text-sm text-gray-500 dark:text-gray-500 p-6 rounded-lg border border-dashed border-gray-300 dark:border-gray-800">
         No features in this view. Try a different phase or status filter.
       </div>
     );
   }
   const tree = buildTree(nodes);
   return (
-    <div className="rounded-lg border border-gray-800 divide-y divide-gray-800 overflow-hidden">
+    <div className="rounded-lg border border-gray-300 dark:border-gray-800 divide-y divide-gray-200 dark:divide-gray-800 overflow-hidden">
       {tree.map((tn) => (
         <TreeRow
           key={tn.node.id}
@@ -119,14 +119,14 @@ function TreeRow({
   const childKind = node.kind === "module" ? "feature" : "task";
   const titleClass =
     node.kind === "module"
-      ? "font-semibold text-white"
+      ? "font-semibold text-gray-900 dark:text-white"
       : node.kind === "feature"
-        ? "font-medium text-gray-100"
-        : "text-gray-300";
+        ? "font-medium text-gray-800 dark:text-gray-100"
+        : "text-gray-600 dark:text-gray-300";
 
   return (
     <>
-      <div className="hover:bg-gray-900/60 transition-colors">
+      <div className="hover:bg-gray-100 dark:hover:bg-gray-900/60 transition-colors">
         <div
           className="flex items-start gap-2 flex-wrap px-4 py-2.5"
           style={{ paddingLeft: 12 + depth * 24 }}
@@ -141,7 +141,7 @@ function TreeRow({
                 toggleExpanded();
               }}
               aria-label={expanded ? "Collapse" : "Expand"}
-              className="mt-0.5 w-4 h-4 flex items-center justify-center text-gray-500 hover:text-gray-200 select-none"
+              className="mt-0.5 w-4 h-4 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 select-none"
             >
               <span
                 className={`inline-block transition-transform text-[10px] ${
@@ -167,19 +167,19 @@ function TreeRow({
                     to avoid implying phase-bound progress. */}
                 {node.kind !== "module" && <StatusBadge status={node.status} />}
                 {node.phase !== "v1" && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-400 mono">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 mono">
                     phase: {node.phase}
                   </span>
                 )}
                 {hasChildren && !expanded && (
-                  <span className="text-[10px] text-gray-500">
+                  <span className="text-[10px] text-gray-500 dark:text-gray-500">
                     +{countDescendants(treeNode)} hidden
                   </span>
                 )}
               </div>
             </div>
           </Link>
-          <div className="flex items-center gap-2 shrink-0 text-xs text-gray-500">
+          <div className="flex items-center gap-2 shrink-0 text-xs text-gray-500 dark:text-gray-500">
             {node.last_touched_at !== null && (
               <>
                 {node.last_client_touched && (
@@ -199,7 +199,7 @@ function TreeRow({
             )}
           </div>
           {node.user_action_required && node.status === "needs_user_action" && (
-            <div className="basis-full text-xs text-yellow-300 bg-yellow-950/40 border border-yellow-900 rounded px-2 py-1.5 whitespace-pre-wrap mt-1">
+            <div className="basis-full text-xs text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-200 dark:border-yellow-900 rounded px-2 py-1.5 whitespace-pre-wrap mt-1">
               ⚠ {node.user_action_required}
             </div>
           )}

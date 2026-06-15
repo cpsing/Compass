@@ -77,8 +77,8 @@ export function CreateNodeForm({
         }
         className={
           compact
-            ? "text-[10px] px-1.5 py-0.5 rounded border border-gray-700/60 text-gray-500 hover:text-gray-200 hover:border-gray-500 hover:bg-gray-800/60 mono"
-            : "text-xs px-2 py-1 rounded border border-dashed border-gray-700 text-gray-400 hover:text-gray-200 hover:border-gray-500"
+            ? "text-[10px] px-1.5 py-0.5 rounded border border-gray-300 dark:border-gray-700/60 text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800/60 mono"
+            : "text-xs px-2 py-1 rounded border border-dashed border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-400 dark:hover:border-gray-500"
         }
       >
         {compact
@@ -90,11 +90,11 @@ export function CreateNodeForm({
 
   return (
     <div
-      className={`rounded-lg border border-gray-700 bg-gray-900 p-3 space-y-2 ${
+      className={`rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3 space-y-2 ${
         compact ? "basis-full mt-2 w-full max-w-2xl" : "max-w-xl"
       }`}
     >
-      <div className="text-xs text-gray-400">
+      <div className="text-xs text-gray-500 dark:text-gray-400">
         New {kind}
         {parentTitle ? ` under "${parentTitle}"` : ""}
       </div>
@@ -109,7 +109,7 @@ export function CreateNodeForm({
           if (e.key === "Escape") setOpen(false);
         }}
         disabled={pending}
-        className="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-blue-600"
+        className="w-full bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded px-2 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-600"
       />
       <textarea
         value={description}
@@ -117,15 +117,15 @@ export function CreateNodeForm({
         rows={2}
         onChange={(e) => setDescription(e.target.value)}
         disabled={pending}
-        className="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-600 resize-none"
+        className="w-full bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-600 resize-none"
       />
-      {error && <div className="text-xs text-red-400">{error}</div>}
+      {error && <div className="text-xs text-red-600 dark:text-red-400">{error}</div>}
       <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={submit}
           disabled={pending || title.trim().length === 0}
-          className="text-xs px-3 py-1.5 rounded bg-blue-700 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-xs px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {pending ? "Creating…" : "Create"}
         </button>
@@ -136,7 +136,7 @@ export function CreateNodeForm({
             setError(null);
           }}
           disabled={pending}
-          className="text-xs px-3 py-1.5 rounded text-gray-400 hover:text-gray-200"
+          className="text-xs px-3 py-1.5 rounded text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
         >
           Cancel
         </button>
