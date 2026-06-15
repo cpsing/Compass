@@ -207,7 +207,7 @@ async function main(): Promise<void> {
   });
 
   console.log('[seed] done.');
-  console.log(`[seed] open http://localhost:3737 (COMPASS_DATA_DIR=${DATA_DIR})`);
+  console.log(`[seed] open http://localhost:18737 (COMPASS_DATA_DIR=${DATA_DIR})`);
   console.log(`       project id: ${project.id}`);
   closeDb();
 }

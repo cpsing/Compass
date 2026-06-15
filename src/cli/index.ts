@@ -1,6 +1,7 @@
 import { captureCommitCli } from "./capture-commit.ts";
 import { installHookCli } from "./install-hook.ts";
 import { statusCli } from "./status.ts";
+import { setupPromptCli } from "./setup-prompt.ts";
 
 const USAGE = `compass-cli — Compass command line interface
 
@@ -8,6 +9,7 @@ Usage:
   compass-cli status         [--runs N] [--calls N]
   compass-cli capture-commit --project-root <path> --sha <sha>
   compass-cli install-hook   [--project-root <path>] [--cli-bin <cmd>] [--force]
+  compass-cli setup-prompt   [--project-root <path>] [--client <type>]
   compass-cli --help
 
 The status subcommand reads COMPASS_PROJECT_ROOT (or cwd) to pick a project.
@@ -30,6 +32,9 @@ function main(): void {
       return;
     case "install-hook":
       installHookCli(rest);
+      return;
+    case "setup-prompt":
+      setupPromptCli(rest);
       return;
     default:
       console.error(`unknown subcommand: ${subcommand}\n`);

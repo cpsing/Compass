@@ -274,7 +274,7 @@ async function main(): Promise<void> {
     kind: 'module',
     title: 'Dashboard (Next.js)',
     source: 'user',
-    description: 'Next.js 16 App Router web UI on port 3737. Server actions for mutations.',
+    description: 'Next.js 16 App Router web UI on port 18737. Server actions for mutations.',
   });
 
   // Dashboard > Project Tree (ai_completed)
@@ -287,7 +287,7 @@ async function main(): Promise<void> {
     source: 'user',
   });
   updateStatus({ id: treeView.id, status: 'ai_completed', caller: 'ai' });
-  setTestSteps(treeView.id, '- Open http://localhost:3737\n- Verify tree renders modules→features→tasks\n- Check status badges match');
+  setTestSteps(treeView.id, '- Open http://localhost:18737\n- Verify tree renders modules→features→tasks\n- Check status badges match');
   touchByClient(treeView.id, 'cursor');
   const treeRun = createRun({
     feature_node_id: treeView.id,
@@ -461,7 +461,7 @@ async function main(): Promise<void> {
   console.log('[dogfood] ✓ Feature tree seeded');
   console.log(`[dogfood]   Modules: 6 (MCP Server, Database, Reconciler, CLI, Dashboard, Daemon, Improvements)`);
   console.log(`[dogfood]   Features: 22`);
-  console.log(`[dogfood]   Dashboard: http://localhost:3737`);
+  console.log(`[dogfood]   Dashboard: http://localhost:18737`);
 
   closeDb();
 }

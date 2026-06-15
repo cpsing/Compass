@@ -21,7 +21,7 @@ Compass fixes this by making AI tools *report what they did* through an MCP serv
 
 ## What you get
 
-1. **A "what's done / what needs testing" dashboard** at `http://localhost:3737`
+1. **A "what's done / what needs testing" dashboard** at `http://localhost:18737`
    - ✅ verified features, ⏳ AI-completed (awaiting test), 🚧 in-progress, ❌ broken
 2. **Auto-recorded AI runs.** Every non-trivial AI change creates an `AIRun` with intent, plan, summary, files touched, and the originating client (`cursor` / `claude_code` / `claude_desktop`).
 3. **Handoff briefs.** Switch tools mid-feature — the next tool calls `compass_generate_handoff_brief` and gets a markdown brief of the prior session's plan, summary, and file diff.
@@ -36,7 +36,7 @@ Compass fixes this by making AI tools *report what they did* through an MCP serv
 ┌───────────────────────────┐        ┌──────────────────────────┐
 │  AI clients (MCP)         │        │  Web dashboard           │
 │  Claude Code / Cursor /   │◀──────▶│  Next.js · /p/[id]       │
-│  Claude Desktop           │        │  port 3737               │
+│  Claude Desktop           │        │  port 18737               │
 └─────────────┬─────────────┘        └─────────────┬────────────┘
               │ stdio MCP                          │
               ▼                                    ▼
@@ -87,7 +87,7 @@ npm run smoke:integration
 
 ```bash
 npm run dev:web
-# open http://localhost:3737
+# open http://localhost:18737
 ```
 
 ### 4. Wire an AI client to the MCP server
@@ -133,7 +133,7 @@ Then add the system prompt from `docs/INTEGRATION.md` so the AI actually calls t
 ## Scripts
 
 ```bash
-npm run dev:web         # Next.js dashboard on :3737
+npm run dev:web         # Next.js dashboard on :18737
 npm run build:web       # Production build
 npm run start:web       # Production server
 npm run mcp             # Run MCP server directly (for debugging)

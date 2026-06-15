@@ -187,8 +187,8 @@ Three options:
 1. **Dashboard**
 
    ```bash
-   COMPASS_DATA_DIR=~/.compass npx next dev -p 3737
-   # open http://localhost:3737
+   COMPASS_DATA_DIR=~/.compass npx next dev -p 18737
+   # open http://localhost:18737
    ```
 
 2. **CLI status** (terminal-friendly):
