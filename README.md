@@ -92,6 +92,21 @@ npm run dev:web
 
 ### 4. Wire an AI client to the MCP server
 
+**Option A: One-command setup (recommended)**
+
+Generate configuration instructions for your AI tool:
+
+```bash
+compass-cli setup-prompt --client claude_code
+compass-cli setup-prompt --client cursor
+compass-cli setup-prompt --client opencode
+compass-cli setup-prompt --client claude_desktop
+```
+
+Copy the output and follow the steps. This generates MCP server config, git hook installation commands, and system prompts with absolute paths already filled in.
+
+**Option B: Manual setup**
+
 See **[docs/INTEGRATION.md](docs/INTEGRATION.md)** for full instructions. Quick version for Claude Code — drop a `.mcp.json` in your project root:
 
 ```json
