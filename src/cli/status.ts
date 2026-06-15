@@ -182,6 +182,36 @@ export function statusCli(rawArgs: string[]): void {
         console.log(`  ${n.status.padEnd(20)} ${n.phase.padEnd(8)} ${n.title}`);
       }
     }
+
+    // Roadmap: show v2/v3 features with priority + estimate
+    const roadmap = db
+      .prepare(
+        `SELECT title, phase, priority, estimate, status FROM feature_nodes
+         WHERE project_id = ? AND phase IN ('v2','v3') AND kind != 'module'
+         ORDER BY phase, priority, title`,
+      )
+      .all(project.id) as Array<{
+      title: string;
+      phase: string;
+      priority: string | null;
+      estimate: string | null;
+      status: string;
+    }>;
+
+    if (roadmap.length > 0) {
+      console.log(`\nroadmap:`);
+      let currentPhase = '';
+      for (const r of roadmap) {
+        if (r.phase !== currentPhase) {
+          currentPhase = r.phase;
+          console.log(`  ── ${currentPhase} ──`);
+        }
+        const pri = r.priority ? r.priority.padEnd(3) : '   ';
+        const est = r.estimate ? ` (${r.estimate})` : '';
+        const st = r.status !== 'planned' ? ` [${r.status}]` : '';
+        console.log(`  ${pri} ${r.title}${est}${st}`);
+      }
+    }
   } finally {
     closeDb();
   }

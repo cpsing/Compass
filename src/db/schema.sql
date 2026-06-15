@@ -42,6 +42,8 @@ CREATE TABLE IF NOT EXISTS feature_nodes (
   last_touched_at       INTEGER,
   client_participation  TEXT NOT NULL DEFAULT '{}',
   position              INTEGER NOT NULL DEFAULT 0,
+  priority              TEXT,
+  estimate              TEXT,
   created_at            INTEGER NOT NULL,
   updated_at            INTEGER NOT NULL,
 
@@ -49,7 +51,8 @@ CREATE TABLE IF NOT EXISTS feature_nodes (
   CHECK (kind IN ('module', 'feature', 'task')),
   CHECK (status IN ('planned', 'in_progress', 'ai_completed',
                     'needs_user_action', 'verified', 'broken', 'archived')),
-  CHECK (source IN ('ai', 'user'))
+  CHECK (source IN ('ai', 'user')),
+  CHECK (priority IN ('P0', 'P1', 'P2', 'P3'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_nodes_project_status ON feature_nodes(project_id, status);

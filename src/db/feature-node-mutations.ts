@@ -94,6 +94,23 @@ export function setPhase(id: string, phase: string): void {
   if (info.changes === 0) throw new Error(`node not found: ${id}`);
 }
 
+export function setPriorityEstimate(
+  id: string,
+  priority: string | null,
+  estimate: string | null,
+): void {
+  const db = openDb();
+  const ts = now();
+  const info = db
+    .prepare(
+      `UPDATE feature_nodes
+       SET priority = ?, estimate = ?, updated_at = ?
+       WHERE id = ?`,
+    )
+    .run(priority, estimate, ts, id);
+  if (info.changes === 0) throw new Error(`node not found: ${id}`);
+}
+
 export interface UpdateNodeInput {
   id: string;
   title?: string;

@@ -14,6 +14,8 @@ export type NodeStatus =
 
 export type NodeSource = "ai" | "user";
 
+export type NodePriority = "P0" | "P1" | "P2" | "P3";
+
 export interface FeatureNode {
   id: string;
   project_id: string;
@@ -34,6 +36,8 @@ export interface FeatureNode {
   last_touched_at: number | null;
   client_participation: string;
   position: number;
+  priority: NodePriority | null;
+  estimate: string | null;
   created_at: number;
   updated_at: number;
 }
@@ -50,6 +54,8 @@ export interface CreateNodeInput {
   phase?: string;
   status?: NodeStatus;
   position?: number;
+  priority?: NodePriority;
+  estimate?: string;
 }
 
 export interface ListFilters {
@@ -107,8 +113,9 @@ export function createNode(input: CreateNodeInput): FeatureNode {
     `INSERT INTO feature_nodes (
       id, project_id, parent_id, kind, depth, path,
       title, description, status, source, phase,
+      priority, estimate,
       position, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     id,
     input.project_id,
@@ -121,6 +128,8 @@ export function createNode(input: CreateNodeInput): FeatureNode {
     status,
     input.source,
     phase,
+    input.priority ?? null,
+    input.estimate ?? null,
     input.position ?? 0,
     ts,
     ts,

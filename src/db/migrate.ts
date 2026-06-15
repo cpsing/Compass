@@ -13,6 +13,19 @@ export function migrate(): void {
   const db = openDb();
   const sql = readFileSync(schemaPath(), 'utf8');
   db.exec(sql);
+
+  // Add columns that may not exist in older databases
+  const alterStatements = [
+    "ALTER TABLE feature_nodes ADD COLUMN priority TEXT",
+    "ALTER TABLE feature_nodes ADD COLUMN estimate TEXT",
+  ];
+  for (const stmt of alterStatements) {
+    try {
+      db.exec(stmt);
+    } catch {
+      // Column already exists — safe to ignore
+    }
+  }
 }
 
 const isMain = import.meta.url === `file://${process.argv[1]}`;
