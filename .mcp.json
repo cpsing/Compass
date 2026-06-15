@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "compass": {
+      "command": "/home/xingbaichao/compass-dev/bin/compass-mcp",
+      "args": [],
+      "env": {
+        "COMPASS_CLIENT_TYPE": "claude_code",
+        "COMPASS_PROJECT_ROOT": "/home/xingbaichao/compass-dev"
+      }
+    }
+  }
+}
