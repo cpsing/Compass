@@ -50,7 +50,7 @@ export function buildServer(): McpServer {
   migrate();
 
   const server = new McpServer(
-    { name: "compass", version: "0.0.1" },
+    { name: "compass", version: "0.1.0" },
     { capabilities: { tools: {} } },
   );
 

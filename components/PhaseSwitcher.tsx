@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
+import { pauseAutoRefresh } from './AutoRefresh.tsx';
 
 interface Props {
   projectId: string;
@@ -16,6 +17,12 @@ export function PhaseSwitcher({ projectId, phases, activePhase, selected, curren
   const options = ['all', ...phases];
 
   const handleClick = useCallback((phase: string) => {
+    // No-op if already on this phase
+    if (phase === selected) return;
+
+    // Pause auto-refresh during navigation to prevent race conditions
+    pauseAutoRefresh(2000);
+
     const params = new URLSearchParams();
     
     // Preserve other params
@@ -25,16 +32,13 @@ export function PhaseSwitcher({ projectId, phases, activePhase, selected, curren
       }
     }
     
-    // Set phase
-    if (phase !== activePhase) {
-      params.set('phase', phase);
-    }
+    // Always set phase param (even for active phase) for consistent URL
+    params.set('phase', phase);
     
-    const queryString = params.toString();
-    const href = `/p/${projectId}${queryString ? `?${queryString}` : ''}`;
+    const href = `/p/${projectId}?${params.toString()}`;
     
-    router.push(href, { scroll: false });
-  }, [projectId, activePhase, currentParams, router]);
+    router.replace(href, { scroll: false });
+  }, [projectId, selected, currentParams, router]);
 
   return (
     <div className="inline-flex items-center gap-1 p-1 rounded-md bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
@@ -45,10 +49,10 @@ export function PhaseSwitcher({ projectId, phases, activePhase, selected, curren
           <button
             key={p}
             onClick={() => handleClick(p)}
-            className={`px-2 py-1 text-xs rounded transition-colors ${
+            className={`min-w-[48px] px-3 py-2 text-sm font-medium rounded-md text-center transition-colors ${
               isSelected
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
           >
             {p}

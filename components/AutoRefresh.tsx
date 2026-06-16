@@ -14,6 +14,12 @@ interface Props {
   intervalMs?: number;
 }
 
+// Global pause state to prevent auto-refresh during user interactions
+let pauseUntil = 0;
+export function pauseAutoRefresh(ms: number): void {
+  pauseUntil = Date.now() + ms;
+}
+
 export function AutoRefresh({ intervalMs = 3000 }: Props) {
   const router = useRouter();
   const lastBeat = useRef<Heartbeat | null>(null);
@@ -24,6 +30,9 @@ export function AutoRefresh({ intervalMs = 3000 }: Props) {
     let cancelled = false;
 
     const poll = async (force = false): Promise<void> => {
+      // Skip if paused due to user interaction
+      if (Date.now() < pauseUntil) return;
+
       if (typeof document !== 'undefined' && document.visibilityState !== 'visible') {
         return;
       }

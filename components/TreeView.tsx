@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { FeatureNode } from "../lib/db-facade.ts";
 import { StatusBadge } from "./StatusBadge.tsx";
@@ -81,7 +81,7 @@ export function TreeView({ projectId, nodes }: Props) {
       </div>
     );
   }
-  const tree = buildTree(nodes);
+  const tree = useMemo(() => buildTree(nodes), [nodes]);
   return (
     <div className="rounded-lg border border-gray-300 dark:border-gray-800 divide-y divide-gray-200 dark:divide-gray-800 overflow-hidden">
       {tree.map((tn) => (

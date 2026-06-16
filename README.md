@@ -206,8 +206,8 @@ All three components (MCP server, dashboard, CLI) must point at the same `COMPAS
 
 ## Status
 
-v0.0.1 — early. Core MCP tools, dashboard, reconciler, and git hook are functional. See `compass-mvp-architecture-v0.3.1.md` for what's next.
+v0.1.0 — initial public release. Core MCP tools, dashboard, reconciler, and git hook are functional. See `compass-mvp-architecture-v0.3.1.md` for what's next.
 
 ## License
 
-Private / unreleased.
+Apache 2.0. See [LICENSE](LICENSE).

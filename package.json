@@ -1,6 +1,6 @@
 {
   "name": "compass",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "Cross-tool product memory for AI-assisted development",
   "type": "module",
@@ -25,7 +25,10 @@
     "dev:web": "next dev -p 18737",
     "build:web": "next build",
     "start:web": "next start -p 18737",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
@@ -42,10 +45,12 @@
     "@types/node": "^22.9.0",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.9",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.15",
     "tailwindcss": "^3.4.19",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^4.1.9"
   }
 }
