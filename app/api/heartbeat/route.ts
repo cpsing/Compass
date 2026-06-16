@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { openDb } from '../../../src/db/connection.ts';
-import { migrate } from '../../../src/db/migrate.ts';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -13,7 +12,6 @@ interface AggregateRow {
 }
 
 export async function GET(): Promise<NextResponse> {
-  migrate();
   const db = openDb();
   const row = db
     .prepare(

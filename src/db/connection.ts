@@ -2,8 +2,10 @@ import Database from 'better-sqlite3';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { dataDir, dbPath } from '../shared/paths.ts';
+import { migrate } from './migrate.ts';
 
 let cached: Database.Database | null = null;
+let migrated = false;
 
 export function openDb(): Database.Database {
   if (cached) return cached;
@@ -17,6 +19,12 @@ export function openDb(): Database.Database {
   db.pragma('busy_timeout = 5000');
 
   cached = db;
+
+  if (!migrated) {
+    migrated = true;
+    migrate();
+  }
+
   return db;
 }
 

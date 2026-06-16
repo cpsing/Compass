@@ -229,7 +229,8 @@ export function getClientStats(q: ClientStatsQuery): ClientStats[] {
         SUM(CASE WHEN ai_runs.run_status = 'failed' THEN 1 ELSE 0 END) AS failed,
         SUM(CASE WHEN ai_runs.run_status = 'abandoned' THEN 1 ELSE 0 END) AS abandoned,
         SUM(CASE WHEN ai_runs.run_status = 'running' THEN 1 ELSE 0 END) AS running,
-        MAX(ai_runs.started_at) AS last_active
+        MAX(ai_runs.started_at) AS last_active,
+        COUNT(DISTINCT CASE WHEN ai_runs.files_touched IS NOT NULL THEN ai_runs.id END) AS runs_with_files
        FROM ai_runs
        JOIN feature_nodes ON feature_nodes.id = ai_runs.feature_node_id
        WHERE feature_nodes.project_id = ?
@@ -239,12 +240,64 @@ export function getClientStats(q: ClientStatsQuery): ClientStats[] {
        GROUP BY ai_runs.client_type
        ORDER BY run_count DESC`,
     )
-    .all(...params) as Array<Omit<ClientStats, "files_touched_count">>;
+    .all(...params) as Array<Omit<ClientStats, "files_touched_count"> & { runs_with_files: number }>;
 
   return rows.map((r) => ({
     ...r,
-    files_touched_count: countDistinctFiles(q, r.client_type),
+    files_touched_count: r.runs_with_files > 0 ? countDistinctFiles(q, r.client_type) : 0,
   }));
+}
+
+export interface TopFeatureWithClient extends TopFeature {
+  client_type: string;
+}
+
+export function getTopFeaturesByClientBatch(
+  q: ClientStatsQuery,
+  limitPerClient = 3,
+): Map<string, TopFeature[]> {
+  const db = openDb();
+  const rows = db
+    .prepare(
+      `SELECT
+         feature_nodes.id AS feature_node_id,
+         feature_nodes.title AS title,
+         COUNT(ai_runs.id) AS run_count,
+         MAX(ai_runs.started_at) AS last_active,
+         ai_runs.client_type AS client_type,
+         ROW_NUMBER() OVER (PARTITION BY ai_runs.client_type ORDER BY COUNT(ai_runs.id) DESC, MAX(ai_runs.started_at) DESC) AS rn
+        FROM ai_runs
+        JOIN feature_nodes ON feature_nodes.id = ai_runs.feature_node_id
+        WHERE feature_nodes.project_id = ?
+          AND ai_runs.started_at >= ?
+          AND ai_runs.started_at <= ?
+        GROUP BY ai_runs.client_type, feature_nodes.id
+        ORDER BY ai_runs.client_type, rn
+      `,
+    )
+    .all(q.project_id, q.since_ms, q.until_ms) as Array<{
+      feature_node_id: string;
+      title: string;
+      run_count: number;
+      last_active: number;
+      client_type: string;
+      rn: number;
+    }>;
+
+  const result = new Map<string, TopFeature[]>();
+  for (const row of rows) {
+    if (row.rn > limitPerClient) continue;
+    if (!result.has(row.client_type)) {
+      result.set(row.client_type, []);
+    }
+    result.get(row.client_type)!.push({
+      feature_node_id: row.feature_node_id,
+      title: row.title,
+      run_count: row.run_count,
+      last_active: row.last_active,
+    });
+  }
+  return result;
 }
 
 function countDistinctFiles(q: ClientStatsQuery, clientType: string): number {

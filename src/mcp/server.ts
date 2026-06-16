@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type { ZodTypeAny } from "zod";
 import { migrate } from "../db/migrate.ts";
-import { buildContext, recordToolCall, type ServerContext } from "./context.ts";
+import { buildContext, recordToolCall, setMcpServer, type ServerContext } from "./context.ts";
 import type { ToolResult } from "./tools/shared.ts";
 
 import * as listFeatures from "./tools/list-features.ts";
@@ -74,6 +74,7 @@ export function buildServer(): McpServer {
 
 export async function runServer(): Promise<void> {
   const server = buildServer();
+  setMcpServer(server.server);
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }

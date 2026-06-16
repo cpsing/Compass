@@ -67,6 +67,8 @@ export interface ListFilters {
   // matching node (regardless of the ancestor's own phase). Modules are
   // cross-phase containers, so this is what tree views typically want.
   include_phase_ancestors?: boolean;
+  // Limit total rows returned. Useful for large projects.
+  limit?: number;
 }
 
 function pickProject(projectId: string): { active_phase: string } {
@@ -225,8 +227,12 @@ export function listProjectNodes(
           OR EXISTS (SELECT 1 FROM matching m WHERE m.path LIKE n.path || '.%')
         )
       ORDER BY n.path ASC
+      ${filters.limit ? "LIMIT ?" : ""}
     `;
-    return db.prepare(sql).all(...matchingParams, projectId) as FeatureNode[];
+    const queryParams = filters.limit
+      ? [...matchingParams, projectId, filters.limit]
+      : [...matchingParams, projectId];
+    return db.prepare(sql).all(...queryParams) as FeatureNode[];
   }
 
   // Default path: each filter narrows the result independently.
@@ -262,8 +268,10 @@ export function listProjectNodes(
 
   const sql = `SELECT * FROM feature_nodes
                WHERE ${where.join(" AND ")}
-               ORDER BY path ASC`;
-  return db.prepare(sql).all(...params) as FeatureNode[];
+               ORDER BY path ASC
+               ${filters.limit ? "LIMIT ?" : ""}`;
+  const queryParams = filters.limit ? [...params, filters.limit] : params;
+  return db.prepare(sql).all(...queryParams) as FeatureNode[];
 }
 
 export function deleteNode(id: string): void {

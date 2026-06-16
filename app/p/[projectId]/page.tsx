@@ -46,6 +46,7 @@ export default async function ProjectTreePage({
     phase: phaseFilter,
     include_phase_ancestors: phaseFilter !== undefined,
     status: statusFilter as any,
+    limit: 200,
   });
   
   // Client-side search filter
@@ -99,6 +100,10 @@ export default async function ProjectTreePage({
           phases={knownPhases}
           activePhase={project.active_phase}
           selected={selected}
+          currentParams={{
+            status: statusFilter,
+            q: searchQuery,
+          }}
         />
         <SearchBar
           projectId={project.id}
