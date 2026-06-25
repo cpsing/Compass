@@ -28,6 +28,8 @@ Compass fixes this by making AI tools *report what they did* through an MCP serv
 4. **Cross-tool audit.** See which tool produced what, when, with what success rate.
 5. **Git reconciliation.** A post-commit hook captures commits; the reconciler links them to the AI run that produced them.
 
+![Dashboard Screenshot](docs/dashboard-screenshot.png)
+
 ---
 
 ## Architecture at a glance
