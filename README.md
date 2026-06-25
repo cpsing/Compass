@@ -199,7 +199,6 @@ All three components (MCP server, dashboard, CLI) must point at the same `COMPAS
 - [`docs/INTEGRATION.md`](docs/INTEGRATION.md) — Wiring Compass into Claude Desktop / Claude Code / Cursor, system prompt template, manual test plan, troubleshooting.
 - [`compass-mvp-architecture-v0.3.1.md`](compass-mvp-architecture-v0.3.1.md) — Latest architecture spec (cross-tool explicitness layer).
 - [`compass-mvp-architecture-v0.3.md`](compass-mvp-architecture-v0.3.md) — Full v0.3 architecture.
-- [`usercase.md`](usercase.md) — Target user scenarios.
 
 ---
 
